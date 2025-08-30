@@ -1,0 +1,559 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-6">
+                <div class="hero-content" data-aos="fade-right">
+                    <h1 class="display-4 fw-bold text-white mb-4">AI-Powered Glaucoma Detection</h1>
+                    <p class="lead text-white-50 mb-5">Upload a retinal fundus image and get instant analysis using our advanced DenseNet121 deep learning model with high accuracy.</p>
+                    <div class="d-flex flex-column flex-md-row gap-3">
+                        <a href="#upload" class="btn btn-primary btn-lg px-4">
+                            <i class="fas fa-search me-2"></i>Get Started
+                        </a>
+                        <a href="#how-it-works" class="btn btn-outline-light btn-lg px-4">
+                            <i class="fas fa-play-circle me-2"></i>Watch Demo
+                        </a>
+                    </div>
+                    
+                    <div class="stats-container mt-5">
+                        <div class="row g-4">
+                            <div class="col-4">
+                                <div class="stat-box">
+                                    <h3 class="text-white">94%</h3>
+                                    <p class="text-white-50">Accuracy</p>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-box">
+                                    <h3 class="text-white">&lt;5s</h3>
+                                    <p class="text-white-50">Analysis Time</p>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-box">
+                                    <h3 class="text-white">10K+</h3>
+                                    <p class="text-white-50">Images Analyzed</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="hero-image" data-aos="fade-left">
+                    <div class="image-container">
+                        <img src="{{ url_for('static', filename='images/hero-bg.jpg') }}" alt="Retinal Scan" class="img-fluid rounded-4 shadow-lg">
+                        <div class="floating-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="success-icon me-3">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">AI Analysis Complete</h6>
+                                        <small class="text-muted">No signs of glaucoma detected</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="wave-shape">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+            <path fill="#ffffff" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,133.3C960,128,1056,96,1152,90.7C1248,85,1344,107,1392,117.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+    </div>
+</section>
+
+<!-- Upload Section -->
+<section id="upload" class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="section-header text-center mb-5" data-aos="fade-up">
+                    <h2 class="mb-3">Upload Retinal Image</h2>
+                    <p class="text-muted">Please upload a high-quality retinal fundus image in JPG or PNG format.</p>
+                </div>
+                
+                <div class="upload-card" data-aos="fade-up">
+                    <div class="card border-0 shadow-lg">
+                        <div class="card-body p-4 p-md-5">
+                            <form action="/" method="POST" enctype="multipart/form-data">
+                                <div id="upload-container" class="upload-area mb-4">
+                                    <div class="text-center p-5">
+                                        <div class="upload-icon mb-3">
+                                            <i class="fas fa-cloud-upload-alt"></i>
+                                        </div>
+                                        <h4>Drag & Drop your image here</h4>
+                                        <p class="text-muted mb-3">or</p>
+                                        <label for="file-upload" class="btn btn-outline-primary">
+                                            <i class="fas fa-folder-open me-2"></i>Browse Files
+                                        </label>
+                                        <input id="file-upload" type="file" name="image" accept="image/*" hidden>
+                                        <div id="file-name" class="mt-3 text-muted"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-center">
+                                    <button id="analyze-btn" type="submit" class="btn btn-primary btn-lg px-5 disabled" disabled>
+                                        <i class="fas fa-search me-2"></i>Analyze Image
+                                    </button>
+                                </div>
+                                
+                                <div id="loading" class="text-center mt-4 d-none">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2">Analyzing image...</p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="upload-features mt-4">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="feature-box text-center">
+                                    <i class="fas fa-shield-alt text-primary mb-2"></i>
+                                    <h6>Secure & Private</h6>
+                                    <p class="text-muted small mb-0">Your images are processed securely and deleted after analysis</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="feature-box text-center">
+                                    <i class="fas fa-bolt text-primary mb-2"></i>
+                                    <h6>Instant Results</h6>
+                                    <p class="text-muted small mb-0">Get analysis results in seconds, not hours</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="feature-box text-center">
+                                    <i class="fas fa-certificate text-primary mb-2"></i>
+                                    <h6>High Accuracy</h6>
+                                    <p class="text-muted small mb-0">High accuracy with our advanced DenseNet121 model</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section id="about" class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
+                <div class="about-image">
+                    <img src="{{ url_for('static', filename='images/about.jpg') }}" alt="About Glaucoma" class="img-fluid rounded-4 shadow">
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="section-header mb-4">
+                    <h2 class="mb-3">About Glaucoma</h2>
+                    <p class="text-muted">Understanding the importance of early detection</p>
+                </div>
+                
+                <p class="mb-4">Glaucoma is a group of eye conditions that damage the optic nerve, which is vital for good vision. This damage is often caused by abnormally high pressure in your eye and is one of the leading causes of blindness for people over 60.</p>
+                
+                <p class="mb-4">Early detection is crucial to prevent vision loss. Our AI system analyzes retinal fundus images to detect signs of glaucoma with high accuracy, enabling early intervention and treatment.</p>
+                
+                <div class="key-points">
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="point-icon me-3">
+                            <i class="fas fa-check-circle text-success"></i>
+                        </div>
+                        <div>
+                            <h6>Leading Cause of Blindness</h6>
+                            <p class="text-muted mb-0">Second leading cause of blindness worldwide</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="point-icon me-3">
+                            <i class="fas fa-check-circle text-success"></i>
+                        </div>
+                        <div>
+                            <h6>No Early Symptoms</h6>
+                            <p class="text-muted mb-0">Often called the "silent thief of sight"</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start">
+                        <div class="point-icon me-3">
+                            <i class="fas fa-check-circle text-success"></i>
+                        </div>
+                        <div>
+                            <h6>Preventable Vision Loss</h6>
+                            <p class="text-muted mb-0">Early detection and treatment can prevent vision loss</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section id="how-it-works" class="py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h2 class="mb-3">How It Works</h2>
+            <p class="text-muted">Our AI system analyzes retinal images in three simple steps</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="process-card h-100">
+                    <div class="process-number">1</div>
+                    <div class="process-icon">
+                        <i class="fas fa-upload"></i>
+                    </div>
+                    <h4>Upload Image</h4>
+                    <p class="text-muted">Upload a clear retinal fundus image in JPG or PNG format through our secure portal.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="process-card h-100">
+                    <div class="process-number">2</div>
+                    <div class="process-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h4>AI Analysis</h4>
+                    <p class="text-muted">Our DenseNet121 model processes the image using advanced deep learning algorithms.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="process-card h-100">
+                    <div class="process-number">3</div>
+                    <div class="process-icon">
+                        <i class="fas fa-file-medical-alt"></i>
+                    </div>
+                    <h4>Get Results</h4>
+                    <p class="text-muted">Receive instant results with detailed analysis.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Technology Section -->
+<section id="technology" class="py-5 bg-light">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h2 class="mb-3">Our Technology</h2>
+            <p class="text-muted">Powered by state-of-the-art deep learning</p>
+        </div>
+        
+        <div class="row align-items-center">
+            <div class="col-lg-6 order-2 order-lg-1" data-aos="fade-right">
+                <div class="tech-content">
+                    <h3 class="mb-4">DenseNet121 Architecture</h3>
+                    <p class="mb-4">Our system is powered by DenseNet121, a state-of-the-art densely connected convolutional neural network that provides excellent feature reuse and gradient flow.</p>
+                    
+                    <div class="tech-features">
+                        <div class="tech-feature">
+                            <i class="fas fa-microchip text-primary me-3"></i>
+                            <div>
+                                <h6>Efficient Architecture</h6>
+                                <p class="text-muted mb-0">Optimized for speed and accuracy</p>
+                            </div>
+                        </div>
+                        <div class="tech-feature">
+                            <i class="fas fa-chart-line text-primary me-3"></i>
+                            <div>
+                                <h6>94% Accuracy</h6>
+                                <p class="text-muted mb-0">High detection accuracy</p>
+                            </div>
+                        </div>
+                        <div class="tech-feature">
+                            <i class="fas fa-clock text-primary me-3"></i>
+                            <div>
+                                <h6>Real-time Processing</h6>
+                                <p class="text-muted mb-0">Results in under 5 seconds</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 order-1 order-lg-2" data-aos="fade-left">
+                <div class="tech-image">
+                    <img src="{{ url_for('static', filename='images/technology.jpg') }}" alt="DenseNet121" class="img-fluid rounded-4 shadow">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h2 class="mb-3">What Experts Say</h2>
+            <p class="text-muted">Feedback from ophthalmology professionals</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="testimonial-card h-100">
+                    <div class="testimonial-content">
+                        <i class="fas fa-quote-left text-primary mb-3"></i>
+                        <p class="mb-3">This AI system shows remarkable accuracy in detecting early signs of glaucoma that might be missed in routine examinations.</p>
+                    </div>
+                    <div class="testimonial-author d-flex align-items-center">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Dr. Smith" class="rounded-circle me-3" width="50">
+                        <div>
+                            <h6 class="mb-0">Dr. James Smith</h6>
+                            <small class="text-muted">Ophthalmologist</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="testimonial-card h-100">
+                    <div class="testimonial-content">
+                        <i class="fas fa-quote-left text-primary mb-3"></i>
+                        <p class="mb-3">A valuable tool for screening patients in remote areas where access to specialists is limited.</p>
+                    </div>
+                    <div class="testimonial-author d-flex align-items-center">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Dr. Johnson" class="rounded-circle me-3" width="50">
+                        <div>
+                            <h6 class="mb-0">Dr. Sarah Johnson</h6>
+                            <small class="text-muted">Researcher</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="testimonial-card h-100">
+                    <div class="testimonial-content">
+                        <i class="fas fa-quote-left text-primary mb-3"></i>
+                        <p class="mb-3">The system's ability to analyze retinal images quickly makes it an excellent tool for busy clinical practices.</p>
+                    </div>
+                    <div class="testimonial-author d-flex align-items-center">
+                        <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="Dr. Williams" class="rounded-circle me-3" width="50">
+                        <div>
+                            <h6 class="mb-0">Dr. Michael Williams</h6>
+                            <small class="text-muted">Eye Specialist</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" class="py-5 bg-light">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <h2 class="mb-3">Contact Us</h2>
+            <p class="text-muted">Have questions about our glaucoma detection system?</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-5 mb-4 mb-lg-0" data-aos="fade-right">
+                <div class="contact-info">
+                    <h3 class="mb-4">Get in Touch</h3>
+                    <p class="mb-4">Have questions about our glaucoma detection system? Reach out to our team for more information.</p>
+                    
+                    <div class="contact-item mb-4">
+                        <div class="d-flex align-items-start">
+                            <div class="contact-icon me-3">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <h6>Address</h6>
+                                <p class="text-muted mb-0">165 Green Road, Dhaka, Bangladesh</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item mb-4">
+                        <div class="d-flex align-items-start">
+                            <div class="contact-icon me-3">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div>
+                                <h6>Phone</h6>
+                                <p class="text-muted mb-0">+8801755555555</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="d-flex align-items-start">
+                            <div class="contact-icon me-3">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h6>Email</h6>
+                                <p class="text-muted mb-0">info@glaucomadetect.com</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-7" data-aos="fade-left">
+                <div class="contact-form">
+                    <form id="contact-form">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Your Name</label>
+                                <input type="text" class="form-control" id="name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Your Email</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="subject" class="form-label">Subject</label>
+                                <input type="text" class="form-control" id="subject" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="message" class="form-label">Message</label>
+                                <textarea class="form-control" id="message" rows="4" required></textarea>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="fas fa-paper-plane me-2"></i>Send Message
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="form-message" class="mt-3 d-none"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8" data-aos="fade-right">
+                <h2 class="mb-3">Ready to Experience AI-Powered Glaucoma Detection?</h2>
+                <p class="mb-0">Upload your retinal image today and get instant results with our advanced DenseNet121 model.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end" data-aos="fade-left">
+                <a href="#upload" class="btn btn-light btn-lg px-4">
+                    <i class="fas fa-search me-2"></i>Start Analysis
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize AOS
+    AOS.init({
+        duration: 1000,
+        once: true
+    });
+    
+    // File upload handling
+    const fileInput = document.getElementById('file-upload');
+    const fileName = document.getElementById('file-name');
+    const analyzeBtn = document.getElementById('analyze-btn');
+    const uploadContainer = document.getElementById('upload-container');
+    const loading = document.getElementById('loading');
+    
+    if (fileInput && fileName && analyzeBtn && uploadContainer && loading) {
+        fileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                fileName.textContent = `Selected: ${this.files[0].name}`;
+                analyzeBtn.disabled = false;
+                analyzeBtn.classList.remove('disabled');
+            } else {
+                fileName.textContent = '';
+                analyzeBtn.disabled = true;
+                analyzeBtn.classList.add('disabled');
+            }
+        });
+        
+        // Drag and drop functionality
+        uploadContainer.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadContainer.classList.add('drag-over');
+        });
+        
+        uploadContainer.addEventListener('dragleave', function() {
+            uploadContainer.classList.remove('drag-over');
+        });
+        
+        uploadContainer.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadContainer.classList.remove('drag-over');
+            
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                const event = new Event('change');
+                fileInput.dispatchEvent(event);
+            }
+        });
+        
+        // Handle form submission
+        const form = document.querySelector('form[action="/"]');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                if (fileInput.files.length === 0) {
+                    e.preventDefault();
+                    alert('Please select an image file first.');
+                    return;
+                }
+                
+                // Show loading state
+                loading.classList.remove('d-none');
+                analyzeBtn.disabled = true;
+                analyzeBtn.textContent = 'Analyzing...';
+                
+                // Let the form submit naturally to /analyze
+                // The browser should redirect to the result page automatically
+            });
+        }
+    }
+    
+    // Contact form handling
+    const contactForm = document.getElementById('contact-form');
+    const formMessage = document.getElementById('form-message');
+    
+    if (contactForm && formMessage) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // In a real application, you would send this data to a server
+            // For this demo, we'll just show a success message
+            formMessage.classList.remove('d-none', 'alert-danger');
+            formMessage.classList.add('alert', 'alert-success');
+            formMessage.textContent = 'Thank you for your message! We will get back to you soon.';
+            contactForm.reset();
+        });
+    }
+    
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
